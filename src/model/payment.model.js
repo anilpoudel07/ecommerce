@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const paymentSchema = new mongoose.Schema(
   {
     orderId: {
@@ -21,7 +22,12 @@ const paymentSchema = new mongoose.Schema(
       default: 0,
       required: true,
     },
+    gateway: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Gateway",
+    },
   },
+
   {
     timestamps: true,
   },
