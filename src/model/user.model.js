@@ -1,43 +1,48 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-const userSchema = new Schema({
-  images: {
-    type: String, //cloudinary url
-    required: true,
+const userSchema = new Schema(
+  {
+    images: {
+      type: String, //cloudinary url
+      required: true,
+    },
+    fullName: {
+      type: String,
+      required: true,
+    },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      index: true,
+    },
+    refreshToken: {
+      type: String,
+    },
+    role: {
+      type: String,
+      enum: ["admin", "user", "vendor"],
+      default: "user",
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+    },
   },
-  fullName: {
-    type: String,
-    required: true,
+  {
+    timestamps: true,
   },
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    trim: true,
-    index: true,
-  },
-  refreshToken: {
-    type: String,
-  },
-  role: {
-    type: String,
-    enum: ["admin", "user", "vendor"],
-    default: "user",
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    trim: true,
-  },
-  password: {
-    type: String,
-    required: [true, "Password is required"],
-  },
-});
+);
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);

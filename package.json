@@ -14,8 +14,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon run src/index.js"
+    "dev": "nodemon -r dotenv/config src/index.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
