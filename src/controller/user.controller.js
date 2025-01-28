@@ -3,8 +3,6 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { User } from "../model/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 const registerUser = asyncHandler(async (req, res) => {
-  console.log("Received request to register user");
-  console.log(req.body);
   const { fullName, email, username, password } = req.body;
 
   if (
@@ -29,6 +27,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const createdUser = await User.findById(user._id).select(
     "-password -refreshToken",
   );
+  console.log(createdUser);
   if (!createdUser) {
     throw new ApiError(500, "Something went wrong while registering a user");
   }
