@@ -3,13 +3,20 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 const userSchema = new Schema(
   {
-    images: {
-      type: String, //cloudinary url
-      required: true,
-    },
+    // images: {
+    //  type: String, //cloudinary url
+    // required: true,
+    //},
     fullName: {
       type: String,
       required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
     },
     username: {
       type: String,
@@ -19,6 +26,11 @@ const userSchema = new Schema(
       trim: true,
       index: true,
     },
+
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+    },
     refreshToken: {
       type: String,
     },
@@ -26,17 +38,6 @@ const userSchema = new Schema(
       type: String,
       enum: ["admin", "user", "vendor"],
       default: "user",
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
-    password: {
-      type: String,
-      required: [true, "Password is required"],
     },
   },
   {

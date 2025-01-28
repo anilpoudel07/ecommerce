@@ -49,8 +49,7 @@ const orderSchema = new mongoose.Schema(
       type: -[orderItemSchema],
     },
     address: {
-      type: mongoose.Schma.Types.ObjectId,
-      ref: "addressSchema",
+      type: addressSchema,
     },
     state: {
       type: String,

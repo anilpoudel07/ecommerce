@@ -1,16 +1,15 @@
-import express from "express";
 import { connectToDB } from "./db/index.js";
-const PORT = 8002;
 import dotenv from "dotenv";
-dotenv.config();
-const app = express();
+import { app } from "./app.js";
+dotenv.config({
+  path: "./.env",
+});
+const PORT = process.env.PORT || 4000;
 const connect = new connectToDB();
 connect
   .connectDB()
   .then(() => {
-    console.log("Connected to the Mongodb");
-
-    app.listen(() => {
+    app.listen(PORT, () => {
       console.log(`Sever is listening to port ${PORT}`);
     });
   })
