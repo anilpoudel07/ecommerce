@@ -36,4 +36,13 @@ const registerUser = asyncHandler(async (req, res) => {
     .status(201)
     .json(new ApiResponse(200, createdUser, "User registered successfully"));
 });
-export { registerUser };
+//make a function for loginuser
+
+const loginUser = asyncHandler(async (req, res) => {
+  //get the data from the frontend in req.body;
+  //hash the password that is done in UserModel
+  //find user in the database
+  //Compare passwords that is done in UserModel get from there
+  //generate jwt token that is done in UserModel get from there
+});
+export { registerUser, loginUser };
