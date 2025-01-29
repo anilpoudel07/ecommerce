@@ -11,11 +11,15 @@ app.use(cookieParser());
 app.use(express.static("public"));
 import userRouter from "./routes/user.routes.js";
 // Routes
+//
+import orderItemRouter from "./routes/order.routes.js";
+import productCatalogue from "./routes/products.routes.js";
 app.use("/api/v1/healthcheck", healthcheckRouter);
 app.use("/api/v1/user", userRouter); // Check this line
-//
+app.use("/api/v1/user", orderItemRouter);
+app.use("/api/v1/user", productCatalogue);
 import { errorHandler } from "./middleware/error.middleware.js";
-//
+
 app.use(errorHandler);
 // Exporting the app for use in the server file (e.g., index.js)
 export { app };

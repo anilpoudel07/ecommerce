@@ -29,3 +29,6 @@ export class Cloudinary {
     };
   }
 }
+
+// cloudinary.js
+export const uploadCloudinary = new Cloudinary().uploadOnCloudinary;

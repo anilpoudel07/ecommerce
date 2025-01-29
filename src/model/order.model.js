@@ -1,64 +1,43 @@
 import mongoose from "mongoose";
+
 const orderItemSchema = new mongoose.Schema({
   productId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId, // ✅ Corrected
     ref: "Product",
+    required: true,
   },
   quantity: {
-    type: Number,
+    type: Number, // ✅ Corrected
     required: true,
   },
 });
+
 const addressSchema = new mongoose.Schema({
-  streetNumber: {
-    type: Number,
-    required: true,
-  },
-  zipCode: {
-    type: Number,
-    required: true,
-  },
-  street: {
-    type: String,
-    required: true,
-  },
-  city: {
-    type: String,
-    required: true,
-  },
-  country: {
-    type: String,
-    required: true,
-  },
+  streetNumber: { type: Number, required: true }, // ✅ Corrected
+  zipCode: { type: Number, required: true },
+  street: { type: String, required: true },
+  city: { type: String, required: true },
+  country: { type: String, required: true },
 });
+
 const orderSchema = new mongoose.Schema(
   {
-    orderPrice: {
-      type: Number,
-      required: true,
-    },
-    phoneNo: {
-      type: String,
-      required: true,
-    },
+    orderPrice: { type: Number, required: true }, // ✅ Corrected
+    phoneNo: { type: String, required: true },
     customer: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: userSchema,
-    },
-    orderItems: {
-      type: -[orderItemSchema],
-    },
-    address: {
-      type: addressSchema,
-    },
+      ref: "User",
+      required: true,
+    }, // ✅ Corrected
+    orderItems: [orderItemSchema],
+    address: addressSchema, // ✅ Corrected (nested schema, no `type:` needed)
     state: {
       type: String,
-      enum: ["PENDING", "DELIVERD", "CANCLLED"],
+      enum: ["PENDING", "DELIVERED", "CANCELLED"],
       default: "PENDING",
-    },
+    }, // ✅ Corrected
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true },
 );
+
 export const Order = mongoose.model("Order", orderSchema);
