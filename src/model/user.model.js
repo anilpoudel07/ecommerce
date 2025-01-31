@@ -38,7 +38,7 @@ const userSchema = new Schema(
     role: {
       type: String,
       enum: ["ADMIN", "USER", "VENDOR"],
-      default: "user",
+      default: "USER",
     },
   },
   {
@@ -50,7 +50,7 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
-userSchema.method.generateAcessToken = async function () {
+userSchema.methods.generateAcessToken = async function () {
   return jwt.sign(
     {
       _id: this._id,
@@ -65,7 +65,7 @@ userSchema.method.generateAcessToken = async function () {
     },
   );
 };
-userSchema.method.generateRefreshToken = async function () {
+userSchema.methods.generateRefreshToken = async function () {
   return jwt.sign(
     {
       _id: this._id,
@@ -80,8 +80,26 @@ userSchema.method.generateRefreshToken = async function () {
     },
   );
 };
-userSchema.method.isPasswordCorrect = async function (password) {
+
+userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
+};
+
+userSchema.methods.generateAcessAndRefreshTokens = async function() {
+  try {
+    console.log("User Data:", this);
+    const acessToken = await this.generateAcessToken();
+    console.log("acess Token Generated:", acessToken);
+    const refreshToken = await this.generateRefreshToken();
+    console.log("Refresh Token Generated:", refreshToken);
+
+    this.refreshToken = refreshToken;
+    await this.save({ validateBeforeSave: false });
+
+    return { acessToken, refreshToken };
+  } catch (error) {
+    throw new Error("Something went wrong while generating acess and refresh tokens");
+  }
 };
 
 export const User = mongoose.model("User", userSchema);
