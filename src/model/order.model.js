@@ -1,17 +1,5 @@
 import mongoose from "mongoose";
 
-const orderItemSchema = new mongoose.Schema({
-  productId: {
-    type: mongoose.Schema.Types.ObjectId, // ✅ Corrected
-    ref: "Product",
-    required: true,
-  },
-  quantity: {
-    type: Number, // ✅ Corrected
-    required: true,
-  },
-});
-
 const addressSchema = new mongoose.Schema({
   streetNumber: { type: Number, required: true }, // ✅ Corrected
   zipCode: { type: Number, required: true },
@@ -28,9 +16,14 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-    }, // ✅ Corrected
-    orderItems: [orderItemSchema],
-    address: addressSchema, // ✅ Corrected (nested schema, no `type:` needed)
+    },
+    orderItems: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Cart",
+      },
+    ],
+    address: addressSchema,
     state: {
       type: String,
       enum: ["PENDING", "DELIVERED", "CANCELLED"],

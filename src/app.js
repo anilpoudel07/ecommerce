@@ -14,10 +14,14 @@ import userRouter from "./routes/user.routes.js";
 //
 import orderItemRouter from "./routes/order.routes.js";
 import productCatalogue from "./routes/products.routes.js";
+import adminRoute from "./routes/admin.routes.js";
+import cartRoute from "./routes/cart.routes.js";
 app.use("/api/v1/healthcheck", healthcheckRouter);
 app.use("/api/v1/user", userRouter); // Check this line
 app.use("/api/v1/user", orderItemRouter);
 app.use("/api/v1/user", productCatalogue);
+app.use("/api/v1", adminRoute);
+app.use("/api/v1/user", cartRoute);
 import { errorHandler } from "./middleware/error.middleware.js";
 
 app.use(errorHandler);

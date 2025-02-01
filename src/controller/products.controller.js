@@ -11,28 +11,35 @@ class productCatalogueClass {
   productCatalogue = asyncHandler(async (req, res) => {
     const { description, name, price, stock } = req.body;
     if (
-      [description, name].some((fields) => fields.trim() === "") &&
       (price === undefined || price === 0) &&
-      (stock === undefined || stock === 0)
+      (stock === undefined || stock === 0) &&
+      description === undefined &&
+      name === undefined
     ) {
       throw new ApiError(404, "All fields are required");
     }
-    const avatarLocalPath = req.files?.avatar[0]?.path;
+    const avatarLocalPath = req.files?.image?.[0]?.path;
+    console.log(avatarLocalPath);
     if (!avatarLocalPath) {
-      throw new ApiError(400, "images are required");
+      throw new ApiError(400, "image are required");
     }
-    const uploadedImage = uploadCloudinary(avatarLocalPath);
-    const userID = req.user.id;
+    const uploadedImage = await uploadCloudinary(avatarLocalPath);
+    // const userID = req.user.id;
+    console.log(uploadedImage);
+    if (!uploadedImage) {
+      throw new ApiError("400", "Image upload is failed");
+    }
     const product = await Product.create({
       description,
       name,
-      productImage: uploadedImage?.url || "",
+      productImage: uploadedImage || "",
       price,
       stock,
-      owner: userID,
+      //  owner: userID,
     });
     const createdProduct = await Product.findById(product._id);
     console.log(createdProduct);
+    return res.status(200).json(new ApiResponse("201", createdProduct));
   });
 }
 
