@@ -25,7 +25,7 @@ const registerUser = asyncHandler(async (req, res) => {
   console.log("User created:", user);
 
   const createdUser = await User.findById(user._id).select(
-    "-password -refreshToken",
+    "-password -refreshToken"
   );
   console.log(createdUser);
   if (!createdUser) {
@@ -39,10 +39,10 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   console.log("Full request body:", req.body); // Debugging log
 
-  const { email, username, password } = req.body;
+  const { email, password } = req.body;
   console.log("Extracted password:", password); // Debugging log
 
-  if (!username && !email) {
+  if (!email) {
     throw new ApiError(400, "Username or email is required");
   }
 
@@ -50,7 +50,7 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Password is required");
   }
 
-  const user = await User.findOne({ $or: [{ username }, { email }] });
+  const user = await User.findOne({ email });
 
   if (!user) {
     throw new ApiError(404, "User does not exist");
@@ -73,8 +73,8 @@ const loginUser = asyncHandler(async (req, res) => {
       new ApiResponse(
         200,
         { userID: user._id, user, accessToken, refreshToken },
-        "User logged in successfully",
-      ),
+        "User logged in successfully"
+      )
     );
 });
 
