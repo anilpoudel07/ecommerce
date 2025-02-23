@@ -32,9 +32,19 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Something went wrong while registering a user");
   }
 
+  const { accessToken, refreshToken } =
+    await user.generateAccessAndRefreshTokens();
   return res
     .status(201)
-    .json(new ApiResponse(200, createdUser, "User registered successfully"));
+    .json(
+      new ApiResponse(
+        200,
+        createdUser,
+        accessToken,
+        refreshToken,
+        "User registered successfully",
+      ),
+    );
 });
 const loginUser = asyncHandler(async (req, res) => {
   console.log("Full request body:", req.body); // Debugging log

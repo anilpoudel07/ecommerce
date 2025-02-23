@@ -1,42 +1,70 @@
 import asyncHandler from "../utils/asyncHandler.js";
-import ApiError from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
 import { Order } from "../model/order.model.js";
-//import Product from "../model/products.model.js"
+import { Cart } from "../model/cart.model.js";
+import { Product } from "../model/products.model.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import ApiError from "../utils/ApiError.js";
 
-class OrderClass {
+class OrderController {
   constructor() {}
 
-  orderItem = asyncHandler(async (req, res) => {
-    console.log(req.body);
-    const { orderPrice, phoneNo, customer, orderItems, address } = req.body;
-    if (
-      [orderPrice, phoneNo, customer, orderItems, address].some(
-        (field) => field === "" || field === null || field === undefined,
-      )
-    ) {
-      throw new ApiError(400, "All fields are required");
+  // Create a new order from cart
+  createOrder = asyncHandler(async (req, res) => {
+    const { cartId, userId, phone } = req.body;
+
+    // Validate required fields
+    if (!cartId || !userId || !phone) {
+      throw new ApiError(400, "Cart ID, User ID, and Phone are required");
+    }
+
+    // Fetch and populate cart items with product details
+    const cart = await Cart.findById(cartId).populate("product.productId");
+    if (!cart) {
+      throw new ApiError(404, "Cart not found");
+    }
+
+    let totalPrice = 0;
+    const itemsWithPrice = [];
+
+    for (const item of cart.product) {
+      const product = item.productId;
+      if (!product) {
+        throw new ApiError(404, `Product ${item.productId} not found`);
+      }
+
+      // Calculate item total and update totalPrice
+      const itemTotal = product.price * item.quantity;
+      totalPrice += itemTotal;
+
+      // Store price snapshot for order
+      itemsWithPrice.push({
+        productId: product._id,
+        quantity: item.quantity,
+        price: product.price,
+      });
     }
 
     const order = await Order.create({
-      orderPrice,
-      phoneNo,
-      customer,
-      orderItems,
-      address,
+      customer: userId,
+      orderItems: itemsWithPrice,
+      totalPrice,
+      phoneNo: phone,
+      state: "PENDING",
     });
 
-    console.log("Order is created", order);
-    const createdOrder = await Order.findById(order._id);
-    if (!createdOrder) {
-      throw new ApiError(500, "Something went wrong while placing a order");
+    // Update product stock
+    for (const item of cart.product) {
+      const product = await Product.findById(item.productId);
+      product.stock -= item.quantity;
+      await product.save();
     }
+
+    await Cart.findByIdAndDelete(cartId);
+
     return res
-      .status(200)
-      .json(new ApiResponse(200, createdOrder, "Order are placed sucessfully"));
+      .status(201)
+      .json(new ApiResponse(201, order, "Order created successfully"));
   });
-  getorderItem = asyncHandler(async (req, res) => {});
 }
 
-export const orderItemController = new OrderClass().orderItem;
-export const getOrderItem = new OrderClass().getorderItem;
+export const orderController = new OrderController().createOrder;

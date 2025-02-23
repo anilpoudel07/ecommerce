@@ -25,5 +25,4 @@ app.use("/api/v1/user", cartRoute);
 import { errorHandler } from "./middleware/error.middleware.js";
 
 app.use(errorHandler);
-// Exporting the app for use in the server file (e.g., index.js)
 export { app };
