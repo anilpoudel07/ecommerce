@@ -9,10 +9,13 @@ class OrderClass {
 
   orderItem = asyncHandler(async (req, res) => {
     console.log(req.body);
-    const { orderPrice, phoneNo, customer, orderItems, address } = req.body;
+    // const { orderPrice, phoneNo, customer, orderItems, address } = req.body;
+    const { orderPrice, phoneNo, orderItems } = req.body;
+
     if (
-      [orderPrice, phoneNo, customer, orderItems, address].some(
-        (field) => field === "" || field === null || field === undefined,
+      // [orderPrice, phoneNo, customer, orderItems, address].some(
+      [orderPrice, phoneNo, orderItems].some(
+        (field) => field === "" || field === null || field === undefined
       )
     ) {
       throw new ApiError(400, "All fields are required");
@@ -21,15 +24,15 @@ class OrderClass {
     const order = await Order.create({
       orderPrice,
       phoneNo,
-      customer,
+      // customer,
       orderItems,
-      address,
+      // address,
     });
 
     console.log("Order is created", order);
     const createdOrder = await Order.findById(order._id);
     if (!createdOrder) {
-      throw new ApiError(500, "Something went wrong while placing a order");
+      throw new ApiError(500, "Something went wrong while placing a order.");
     }
     return res
       .status(200)

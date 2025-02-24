@@ -31,6 +31,6 @@ const gatewaySchema = new mongoose.Schema(
   },
   {
     timestams: true,
-  },
+  }
 );
 export const Gateway = mongoose.model("Gateway", gatewaySchema);
