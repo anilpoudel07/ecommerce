@@ -27,3 +27,4 @@ import { errorHandler } from "./middleware/error.middleware.js";
 app.use(errorHandler);
 // Exporting the app for use in the server file (e.g., index.js)
 export { app };
+module.exports = app; // Needed for Vercel
